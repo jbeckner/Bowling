@@ -15,7 +15,6 @@ namespace Tests
     {
         private IBowlingService bowlingService;
         private IMemoryCache memoryCache;
-        private LinkedList<FrameModel> _frames;
         private BowlingController _controller;
 
         [SetUp]
@@ -30,13 +29,12 @@ namespace Tests
         [Test]
         public void LogicCheck_TestMultipleBalls_AssertsAreTrue()
         {
-            var firstBall = _controller.Get();
-          
-            var secondBall = _controller.Get();
-
-            var thirdBall = _controller.Get().ToList();
+            _controller.BowlBall();
+            _controller.BowlBall();
+            var thirdBall = _controller.BowlBall().ToList();
 
             Assert.IsNotEmpty(thirdBall);
+            //Expecting at least one frame complete
             Assert.True(thirdBall.Count > 1);
 
             var node = thirdBall.First();

@@ -11,7 +11,6 @@ namespace Tests
     public class BowlingServiceTests
     {
         private IBowlingService bowlingService;
-        private LinkedList<FrameModel> _frames;
 
         [SetUp]
         public void Setup()
