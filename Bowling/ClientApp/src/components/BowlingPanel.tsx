@@ -50,44 +50,61 @@ export class BowlingPanel extends React.Component<{}, BowlingState> {
     }
   }
 
+  renderFirstRoll(frameData: Frame | null, index: number) {
+    return (
+      <span style={{ paddingLeft: 8, paddingTop: 5 }}>
+        {frameData?.firstRoll != null && (!frameData.hadStrike || index == 10)
+          ? frameData.firstRoll == 10
+            ? "X"
+            : frameData.firstRoll
+          : ""}
+      </span>
+    );
+  }
+
+  renderSecondRoll(frameData: Frame | null, index: number) {
+    return (
+      <span className="second-score">
+        {frameData?.hadStrike && index != 10 && "X"}
+        {frameData?.secondRoll &&
+          (frameData.hadSpare
+            ? "/"
+            : frameData.secondRoll ?? frameData.secondRoll)}
+      </span>
+    );
+  }
+
+  renderThirdRollLastFrame(frameData: Frame | null) {
+    return (
+      <span className="tenth-third">
+        {frameData?.tenthFrameThirdRoll != null
+          ? frameData.tenthFrameThirdRoll === 10
+            ? "X"
+            : frameData.tenthFrameThirdRoll
+          : ""}
+      </span>
+    );
+  }
+
   renderFrames() {
     var frames = [];
     for (let i = 1; i <= 10; i++) {
+      //Get Frame data if it exists as the panels are rerendered
       let frameData =
         this.state.panes != null && this.state.panes.length >= i - 1
           ? this.state.panes[i - 1]
           : null;
 
+      //Build out the frames for render
       frames.push(
         <div key={i} className="panel">
           <div style={{ width: 100, textAlign: "center" }}>{i}</div>
           <div className="frame-cell">
             <div style={{ display: "flex" }}>
-              <span style={{ paddingLeft: 8, paddingTop: 5 }}>
-                {frameData?.firstRoll != null &&
-                (!frameData.hadStrike || i == 10)
-                  ? frameData.firstRoll == 10
-                    ? "X"
-                    : frameData.firstRoll
-                  : ""}
-              </span>
+              {this.renderFirstRoll(frameData, i)}
               <div style={{ flexGrow: 1 }} />
-              <span className="second-score">
-                {frameData?.hadStrike && i != 10 && "X"}
-                {frameData?.secondRoll &&
-                  (frameData.hadSpare
-                    ? "/"
-                    : frameData.secondRoll ?? frameData.secondRoll)}
-              </span>
-              {i == 10 && (
-                <span className="tenth-third">
-                  {frameData?.tenthFrameThirdRoll != null
-                    ? frameData.tenthFrameThirdRoll === 10
-                      ? "X"
-                      : frameData.tenthFrameThirdRoll
-                    : ""}
-                </span>
-              )}
+              {this.renderSecondRoll(frameData, i)}
+              {i == 10 && <>{this.renderThirdRollLastFrame(frameData)}</>}
             </div>
             <div style={{ textAlign: "center", paddingTop: 15 }}>
               <span style={{}}>
@@ -112,12 +129,14 @@ export class BowlingPanel extends React.Component<{}, BowlingState> {
           {!this.state.gameOver && (
             <>
               <button
+                className={"btn btn-primary"}
                 disabled={this.state.disabled}
                 onClick={() => this.clearCache()}
               >
                 New Game
               </button>
               <button
+                className={"btn btn-primary"}
                 disabled={this.state.disabled}
                 onClick={() => this.bowlBall()}
               >
@@ -136,7 +155,12 @@ export class BowlingPanel extends React.Component<{}, BowlingState> {
               this.state.panes[this.state.panes.length - 1].currentTotal
             }`}</h3>
             <div>
-              <button onClick={() => this.playAgain()}>Play Again?</button>
+              <button
+                className={"btn btn-secondary"}
+                onClick={() => this.playAgain()}
+              >
+                Play Again?
+              </button>
             </div>
           </div>
         )}
