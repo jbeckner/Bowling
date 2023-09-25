@@ -4,7 +4,7 @@ React/Typescript with .NET CORE (NUnit Tests)
 
 ## Dependencies
 
-Nodejs -
+Nodejs - https://nodejs.org/
 
 ## Application Functions
 
@@ -14,4 +14,6 @@ Nodejs -
 
 ## Game Breakdown
 
-By bowling with the button "Bowl Ball", pins are knocked down randomly between 0 - max pins remaining.
+By bowling with the button "Bowl Ball", pins are knocked down randomly between 0 and max pins remaining on the frame.
+
+![UI Layout](image.png)
