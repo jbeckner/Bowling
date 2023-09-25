@@ -1,10 +1,7 @@
 ﻿using Bowling.Models;
 
 namespace Bowling.Services
-{
-    
-
-
+{    
     public class BowlingService : IBowlingService
     {
         private Random random = new Random();

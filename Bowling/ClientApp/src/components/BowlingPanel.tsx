@@ -32,7 +32,7 @@ export class BowlingPanel extends React.Component<{}, BowlingState> {
 
   async bowlBall() {
     this.setState({ disabled: true });
-    const response = await fetch(`bowling`);
+    const response = await fetch(`bowling/bowlball`);
     const data = await response.json();
     this.setState({
       panes: data,
@@ -69,6 +69,8 @@ export class BowlingPanel extends React.Component<{}, BowlingState> {
         {frameData?.secondRoll &&
           (frameData.hadSpare
             ? "/"
+            : frameData.hadStrike
+            ? "X"
             : frameData.secondRoll ?? frameData.secondRoll)}
       </span>
     );

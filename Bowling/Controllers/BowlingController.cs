@@ -28,8 +28,8 @@ namespace Bowling.Controllers
             return true;
         }
 
-        [HttpGet]
-        public IEnumerable<FrameModel> Get()
+        [HttpGet("[action]")]
+        public IEnumerable<FrameModel> BowlBall()
         {
             LinkedList<FrameModel> frameList = this.GetCache(FrameKey);
 
@@ -63,8 +63,10 @@ namespace Bowling.Controllers
 
                 if(isTenthFrame)
                 {
-                    if((!currentFrame.hadSpare || !currentFrame.hadStrike))
-                        currentFrame.frameFinished = true;                        
+                    if ((currentFrame.hadSpare || currentFrame.hadStrike))
+                        currentFrame.frameFinished = false;
+                    else
+                        currentFrame.frameFinished = true;
                 }
                 else
                 {
@@ -83,14 +85,12 @@ namespace Bowling.Controllers
 
             LinkedListNode<FrameModel>? curNode = frameList.First;
 
+            //Update existing frames, important if they weren't open frames. 
             while (curNode != null)
             {
                 curNode.Value.currentTotal = _bowlingService.CalculateTotalScore(frameList, curNode);
-
                 curNode = curNode.Next;
             }
-
-            
 
             return frameList.Select((a, index) => new FrameModel
             {
@@ -104,6 +104,10 @@ namespace Bowling.Controllers
             }) ;
         }
 
+        /// <summary>
+        /// Clear cache between games or on request
+        /// </summary>
+        /// <param name="memoryCache">pseudo db for this project</param>
         public void IMemoryCacheClear(IMemoryCache memoryCache)
         {
             PropertyInfo? prop = memoryCache.GetType().GetProperty("EntriesCollection", BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.NonPublic | BindingFlags.Public);
@@ -126,6 +130,12 @@ namespace Bowling.Controllers
             return _frames;
         }
 
+
+        /// <summary>
+        /// Either gets the active frame or add a new one and return it 
+        /// </summary>
+        /// <param name="frames">List of current frame nodes</param>
+        /// <returns>Frame representing the active one</returns>
         private FrameModel GetCurrentFrame(LinkedList<FrameModel> frames)
         {
             if(frames.Count() == 0)
@@ -136,7 +146,6 @@ namespace Bowling.Controllers
 
             var lastFrame = frames.Last();
 
-            //if(lastFrame.firstRoll == null || (!lastFrame.hadStrike && lastFrame.secondRoll == null) || (frames.Count == 10 && lastFrame.tenthFrameThirdRoll == null))
             if(!lastFrame.frameFinished)
             {
                 return lastFrame;
